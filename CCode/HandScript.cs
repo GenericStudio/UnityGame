@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using UnityScript.Lang;
+
 
 [Serializable]
 public class HandScript : MonoBehaviour
@@ -21,14 +21,14 @@ public class HandScript : MonoBehaviour
 
 	public InputManager Inputs;
 
-	public override void Start()
+	public  void Start()
 	{
 		this.player = (PlayerMovement)this.transform.root.GetComponent("PlayerMovement");
 		this.Inputs = (InputManager)this.player.gameObject.GetComponent("InputManager");
 		this.Grip = this.transform.FindChild("Grip").transform;
 	}
 
-	public override void Update()
+	public  void Update()
 	{
 		if (!(this.Holding == null) || this.Inputs.fire.state == key_state.Down)
 		{
@@ -38,7 +38,7 @@ public class HandScript : MonoBehaviour
 			if (this.Holding == null)
 			{
 				Collider2D[] array = Physics2D.OverlapCircleAll(this.transform.position, this.reach, this.items);
-				if (Extensions.get_length(array) > 0)
+				if (array.Length > 0)
 				{
 					this.Holding = (Item)array[0].gameObject.transform.root.GetComponent("Item");
 					this.Holding.transform.root.parent = this.Grip.transform;
@@ -75,7 +75,7 @@ public class HandScript : MonoBehaviour
 		}
 	}
 
-	public override void Main()
+	public  void Main()
 	{
 	}
 }

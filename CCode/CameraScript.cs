@@ -1,10 +1,10 @@
 ﻿using System;
 using UnityEngine;
-
+using System.Collections.Generic;
 [Serializable]
 public class CameraScript : MonoBehaviour
 {
-	public Transform[] targets;
+	public List<Transform> targets;
 
 	public float smoothingFactor;
 
@@ -16,11 +16,11 @@ public class CameraScript : MonoBehaviour
 
 	public int inner_percent;
 
-	public override void Start()
+	public  void Start()
 	{
 	}
 
-	public override void Update()
+	public  void Update()
 	{
 		Vector3 a = new Vector3((float)0, (float)0, (float)0);
 		float num = (float)0;
@@ -37,8 +37,8 @@ public class CameraScript : MonoBehaviour
 		int num12 = 0;
 		int num13 = 0;
 		int i = 0;
-		Transform[] array = this.targets;
-		int length = array.Length;
+		List<Transform> array = targets;
+		int length = array.Count;
 		while (i < length)
 		{
 			a += array[i].position;
@@ -68,7 +68,7 @@ public class CameraScript : MonoBehaviour
 		this.transform.position = new Vector3(vector2.x, vector2.y, (float)this.zoom);
 	}
 
-	public override void Main()
+	public  void Main()
 	{
 	}
 }

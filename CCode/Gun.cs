@@ -1,8 +1,6 @@
-﻿using Boo.Lang.Runtime;
-using CompilerGenerated;
-using System;
+﻿using System;
 using UnityEngine;
-using UnityScript.Lang;
+
 
 [Serializable]
 public class Gun : MonoBehaviour
@@ -47,14 +45,13 @@ public class Gun : MonoBehaviour
 
 	private float last_fire_time;
 
-	public override void Start()
+	public  void Start()
 	{
 		this.Muzzle = this.transform.FindChild("Muzzle").transform;
-		this.Item.fire = new __Gun_Start$callable0$25_22__(this.shoot);
 		this.gun_audio = this.GetComponent<AudioSource>();
 	}
 
-	public override void Update()
+	public  void Update()
 	{
 		if (this.Item.Holder != null && Time.time - this.last_fire_time > this.rate_limit && (this.Item.Holder.player.Inputs.fire.state == key_state.Down || (this.auto_fire && this.Item.Holder.player.Inputs.fire.state == key_state.Hold)))
 		{
@@ -75,7 +72,7 @@ public class Gun : MonoBehaviour
 		}
 	}
 
-	public override void shoot()
+	public  void shoot()
 	{
 		MonoBehaviour.print("shoot called");
 		if (this.ammo >= 1)
@@ -92,20 +89,17 @@ public class Gun : MonoBehaviour
 			}
 			for (int i = 0; i < this.bullets_per; i++)
 			{
-				GameObject gameObject = (GameObject)UnityEngine.Object.Instantiate(this.Bullet, this.Muzzle.position, this.Muzzle.rotation);
-				Component component = gameObject.GetComponent("Bullet");
-				RuntimeServices.SetProperty(component, "velocity", new Vector2((!this.Item.Holder.player.flipX) ? this.shot_speed : (-this.shot_speed), UnityEngine.Random.Range(-this.Spread, this.Spread)));
-				RuntimeServices.SetProperty(component, "max_distance", this.bulletRange);
-				UnityRuntimeServices.Invoke(component, "Initialize", new object[]
-				{
-					this.Muzzle.transform.position
-				}, typeof(MonoBehaviour));
-				RuntimeServices.SetProperty(component, "force", this.bullet_force);
+			   GameObject bullet = (GameObject)Instantiate(Bullet, Muzzle.position, Muzzle.rotation);
+        Bullet bull_script = (Bullet)bullet.GetComponent("Bullet");
+        bull_script._velocity = new Vector2((Item.Holder.player.flipX ? -shot_speed : shot_speed), UnityEngine.Random.Range(-Spread, Spread));
+        bull_script.max_distance = bulletRange;
+        bull_script.Initialize(Muzzle.transform.position);
+        bull_script.force = bullet_force;
 			}
 		}
 	}
 
-	public override void Main()
+	public  void Main()
 	{
 	}
 }

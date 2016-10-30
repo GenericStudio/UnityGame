@@ -20,14 +20,14 @@ public class Item : MonoBehaviour
 
 	public object fire;
 
-	public override void Start()
+	public  void Start()
 	{
 		this.rigid = (Rigidbody2D)this.GetComponent("Rigidbody2D");
 		this.coll = (Collider2D)this.GetComponent("Collider2D");
 		this._sprite = (SpriteRenderer)this.gameObject.transform.Find("Sprite").GetComponent("SpriteRenderer");
 	}
 
-	public override void PickUp(HandScript holder)
+	public  void PickUp(HandScript holder)
 	{
 		if (this.Holder == null)
 		{
@@ -48,7 +48,7 @@ public class Item : MonoBehaviour
 		}
 	}
 
-	public override void Drop()
+	public  void Drop()
 	{
 		if (this.Holder != null)
 		{
@@ -65,11 +65,11 @@ public class Item : MonoBehaviour
 		}
 	}
 
-	public override void Update()
+	public  void Update()
 	{
 	}
 
-	public override void Main()
+	public  void Main()
 	{
 	}
 }

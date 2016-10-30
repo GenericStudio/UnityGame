@@ -1,7 +1,6 @@
-﻿using Boo.Lang.Runtime;
-using System;
+﻿using System;
 using UnityEngine;
-using UnityScript.Lang;
+
 
 [Serializable]
 public class Bullet : MonoBehaviour
@@ -16,7 +15,7 @@ public class Bullet : MonoBehaviour
 
 	public LayerMask Hits;
 
-	public Vector2 velocity;
+	public Vector2 _velocity;
 
 	public RaycastHit2D hit_ray;
 
@@ -33,10 +32,10 @@ public class Bullet : MonoBehaviour
 		this.active = true;
 	}
 
-	public override void Start()
+	public  void Start()
 	{
 		MonoBehaviour.print("bullet_start: " + this.transform.position);
-		UnityEngine.Object.Destroy(this.gameObject, (float)20);
+		GameObject.Destroy(this.gameObject, (float)20);
 		this.line = (LineRenderer)this.GetComponent("LineRenderer");
 		this.line.SetVertexCount(2);
 		this.startPos = this.transform.position;
@@ -45,44 +44,37 @@ public class Bullet : MonoBehaviour
 		this.line.SetPosition(1, this.lastPos);
 	}
 
-	public override void Initialize(Vector3 muzzle)
+	public  void Initialize(Vector3 muzzle)
 	{
 		this.lastPos = muzzle;
 		this.line.SetPosition(0, this.transform.position);
 		this.line.SetPosition(1, this.lastPos);
 	}
 
-	public override void Update()
+	public  void Update()
 	{
 		if (this.active)
 		{
-			this.transform.position = this.transform.position + this.velocity;
+			this.transform.position = this.transform.position + (Vector3)this._velocity;
 			this.nextPos = new Vector2(this.transform.position.x, this.transform.position.y);
 			if (Vector3.Distance(this.startPos, this.nextPos) > (float)this.max_distance)
 			{
-				UnityEngine.Object.Destroy(this.gameObject);
+				GameObject.Destroy(this.gameObject);
 			}
 			this.hit_ray = Physics2D.Linecast(this.lastPos, this.nextPos, this.hit_layer_mask);
 			Debug.DrawLine(this.lastPos, this.nextPos, Color.red, (float)2);
 			if (this.hit_ray.collider != null)
 			{
 				this.active = false;
-				UnityEngine.Object.Destroy(this.gameObject, (float)5);
-				Component component = this.hit_ray.collider.gameObject.transform.root.GetComponent("PlayerMovement");
-				if (component)
-				{
-					UnityRuntimeServices.Invoke(component, "applyGlobalForce", new object[]
-					{
-						this.velocity.normalized * (float)this.force
-					}, typeof(MonoBehaviour));
+				GameObject.Destroy(this.gameObject, (float)5);
+				PlayerMovement component = (PlayerMovement)this.hit_ray.collider.gameObject.transform.root.GetComponent("PlayerMovement");
+				if (component){
+					component.applyGlobalForce(_velocity.normalized * (float)force);
+					component.ReceiveDamage(1);
 				}
-				MonoBehaviour.print(component);
-				MonoBehaviour.print(this.hit_ray.collider.gameObject.name);
-				Component component2 = this.hit_ray.collider.GetComponent("Rigidbody2D");
-				if (component2)
-				{
-					RuntimeServices.SetProperty(component2, "velocity", RuntimeServices.InvokeBinaryOperator("op_Addition", UnityRuntimeServices.GetProperty(component2, "velocity"), -this.hit_ray.normal * (float)this.force));
-				}
+				active=false;
+				Rigidbody2D enemy_rigid = (Rigidbody2D)hit_ray.collider.GetComponent("Rigidbody2D");
+				if(enemy_rigid) enemy_rigid.velocity  += -hit_ray.normal*force;
 			}
 			this.line.SetPosition(0, this.lastPos);
 			this.line.SetPosition(1, this.nextPos);
@@ -95,22 +87,16 @@ public class Bullet : MonoBehaviour
 		}
 	}
 
-	public override void Hit(object gameObject)
+	public  void Hit(GameObject obj)
 	{
-		object lhs = UnityRuntimeServices.Invoke(gameObject, "GetComponent", new object[]
-		{
-			"Rigidbody2D"
-		}, typeof(MonoBehaviour));
-		if (!RuntimeServices.EqualityOperator(lhs, null))
-		{
-		}
+		Rigidbody2D coll = (Rigidbody2D)obj.GetComponent("Rigidbody2D");
 	}
 
-	public override void FixedUpdate()
+	public  void FixedUpdate()
 	{
 	}
 
-	public override void Main()
+	public  void Main()
 	{
 	}
 }

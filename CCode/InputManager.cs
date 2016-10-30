@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
-using UnityScript.Lang;
+
+
 [Serializable]
 public enum key_state
 {
@@ -9,6 +10,35 @@ public enum key_state
 	Up,
 	Hold
 }
+
+[Serializable]
+public class input
+{
+	public string[] keys;
+
+	public key_state state;
+
+	public string[] axis;
+
+	public int direction;
+
+	public input(string[] keys, key_state state, string[] axis, int direction)
+	{
+	 this.keys = keys;
+    this.state = state;
+    this.axis = axis;
+    this.direction = direction;
+	}
+
+	public input(string[] keys, key_state state)
+	{
+	 this.keys = keys;
+    this.state = state;
+    this.axis = null;
+	}
+
+}
+
 [Serializable]
 public class InputManager : MonoBehaviour
 {
@@ -32,7 +62,7 @@ public class InputManager : MonoBehaviour
 
 	public input[] inputs;
 
-	public InputManager()
+	public  InputManager()
 	{
 		this.up = new input(new string[]
 		{
@@ -100,13 +130,13 @@ public class InputManager : MonoBehaviour
 		};
 	}
 
-	public override void Start()
+	public  void Start()
 	{
 	}
 
-	public override void Update()
+	public  void Update()
 	{
-		for (int i = 0; i < Extensions.get_length(this.inputs); i++)
+		for (int i = 0; i < inputs.Length; i++)
 		{
 			bool flag = false;
 			int num = 0;
@@ -168,7 +198,8 @@ public class InputManager : MonoBehaviour
 		}
 	}
 
-	public override void Main()
+	public  void Main()
 	{
 	}
 }
+

@@ -34,9 +34,9 @@ public class PlayerMovement : MonoBehaviour
 
 	public RaycastHit2D right_ray;
 
-	public Vector3 staticFrame;
+	public Vector2 staticFrame;
 
-	public Vector3 currSpeed;
+	public Vector2 currSpeed;
 
 	public bool isStillJumping;
 
@@ -68,6 +68,12 @@ public class PlayerMovement : MonoBehaviour
 
 	public int ground_speed;
 
+	public int player_num;
+
+	public int health;
+
+	public GameManager gameManager;
+
 	public PlayerMovement()
 	{
 		this.runSpeed = 35f;
@@ -79,7 +85,7 @@ public class PlayerMovement : MonoBehaviour
 		this.right_ray = default(RaycastHit2D);
 	}
 
-	public override void Start()
+	public  void Start()
 	{
 		this.Inputs = (InputManager)this.GetComponent("InputManager");
 		Time.timeScale = (float)1;
@@ -88,7 +94,7 @@ public class PlayerMovement : MonoBehaviour
 		this.hand = (HandScript)this.gameObject.transform.Find("Hand").GetComponent("HandScript");
 	}
 
-	public override void Update()
+	public  void Update()
 	{
 		int num = 0;
 		Vector3 position = this.transform.position;
@@ -115,7 +121,7 @@ public class PlayerMovement : MonoBehaviour
 		this.setStaticFrame(default(Vector2));
 	}
 
-	public override void UpdateAnimator()
+	public  void UpdateAnimator()
 	{
 		if (this.horizontalInput != (float)0)
 		{
@@ -133,14 +139,9 @@ public class PlayerMovement : MonoBehaviour
 		this._animator.SetFloat("vSpeed", this.currSpeed.y);
 		this._animator.SetBool("Crouching", this.Inputs.down.state == key_state.Hold);
 		this._animator.SetBool("LookingUp", this.Inputs.up.state == key_state.Hold);
-		Animator arg_F6_0 = this._animator;
-		string arg_F6_1 = "WallClinging";
-		bool arg_E9_0;
-		if (arg_E9_0 = !this.isTouchingFloor)
-		{
-			arg_E9_0 = this.isOnLeftWall;
-		}
-		arg_F6_0.SetBool(arg_F6_1, arg_E9_0 ?? this.isOnRightWall);
+			_animator.SetBool("WallClinging", !isTouchingFloor && (isOnLeftWall || isOnRightWall));
+
+		
 		this._animator.SetBool("Jetpacking", this.slow_fall);
 		if (this.isOnRightWall)
 		{
@@ -166,7 +167,7 @@ public class PlayerMovement : MonoBehaviour
 		}
 	}
 
-	public override void handleJumps()
+	public  void handleJumps()
 	{
 		float num = this.jump_force;
 		if (this.Inputs.jump.state == key_state.Down)
@@ -205,13 +206,13 @@ public class PlayerMovement : MonoBehaviour
 		this.slow_fall = arg_183_1;
 	}
 
-	public override void handleHorizontal()
+	public  void handleHorizontal()
 	{
 		this.ground_speed = (int)(this.currSpeed.x - this.staticFrame.x);
-		int num = Mathf.Abs(this.ground_speed);
-		this.speedMax = this.runSpeed + Mathf.Abs(this.staticFrame.x);
-		float num2 = this.speedMax - (float)num;
-		if (this.Inputs.down.state == key_state.None && Mathf.Abs(this.horizontalInput) > 0.1f)
+		int ground_speed_magnitude = Mathf.Abs(this.ground_speed);
+		this.speedMax = (this.Inputs.down.state == key_state.None)?this.runSpeed:this.runSpeed/3 + Mathf.Abs(this.staticFrame.x);
+		float num2 = this.speedMax - (float)ground_speed_magnitude;
+		if (Mathf.Abs(this.horizontalInput) > 0.1f)
 		{
 			if (Mathf.Sign(this.horizontalInput) == Mathf.Sign((float)this.ground_speed))
 			{
@@ -222,7 +223,7 @@ public class PlayerMovement : MonoBehaviour
 				this.currSpeed.x = this.currSpeed.x + this.speedMax * (Time.fixedDeltaTime * this.accel) * Mathf.Sign(this.horizontalInput) * (float)2;
 			}
 		}
-		else if (num > 4)
+		else if (ground_speed_magnitude > 4)
 		{
 			if (this.Inputs.down.state == key_state.Hold)
 			{
@@ -239,7 +240,7 @@ public class PlayerMovement : MonoBehaviour
 		}
 	}
 
-	public override void getInputs()
+	public  void getInputs()
 	{
 		if (this.Inputs.left.state == key_state.Hold)
 		{
@@ -267,7 +268,7 @@ public class PlayerMovement : MonoBehaviour
 		}
 	}
 
-	public override void whatAmITouching()
+	public  void whatAmITouching()
 	{
 		this.isTouchingFloor = false;
 		this.isOnLeftWall = false;
@@ -326,7 +327,7 @@ public class PlayerMovement : MonoBehaviour
 		this.isAirborn = arg_45B_1;
 	}
 
-	public override void OnCollisionStay2D(Collision2D hit)
+	public  void OnCollisionStay2D(Collision2D hit)
 	{
 		if (hit.gameObject.GetComponent<Rigidbody2D>() && hit.rigidbody.mass * hit.rigidbody.velocity.magnitude > this.GetComponent<Rigidbody2D>().mass * this.GetComponent<Rigidbody2D>().velocity.magnitude)
 		{
@@ -334,21 +335,21 @@ public class PlayerMovement : MonoBehaviour
 		}
 	}
 
-	public override void setStaticFrame(Vector3 outsideAction)
+	public  void setStaticFrame(Vector3 outsideAction)
 	{
 	}
 
-	public override void applyForce(Vector2 force)
+	public  void applyForce(Vector2 force)
 	{
 		this.externalForces += ((!this.flipX) ? force : new Vector2(-force.x, force.y));
 	}
 
-	public override void applyGlobalForce(Vector2 force)
+	public  void applyGlobalForce(Vector2 force)
 	{
 		this.externalForces += force;
 	}
 
-	public override void applyGravity()
+	public  void applyGravity()
 	{
 		if (this.currSpeed.y > (float)-140)
 		{
@@ -363,7 +364,18 @@ public class PlayerMovement : MonoBehaviour
 		}
 	}
 
-	public override void Main()
+	public void ReceiveDamage(int amount){
+		health-=amount;
+		if(health<0){
+			KillPlayer();
+		}
+	}
+	public void KillPlayer(){
+		gameManager.SpawnPlayer(player_num);
+		Destroy(this.gameObject);
+	}
+
+	public  void Main()
 	{
 	}
 }
