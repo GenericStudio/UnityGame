@@ -44,9 +44,11 @@ public class Gun : MonoBehaviour
 	public float rate_limit;
 
 	private float last_fire_time;
+	private float marked_dead_at;
 
 	public  void Start()
 	{
+		if(!Item) Item = (Item)GetComponent("Item");
 		this.Muzzle = this.transform.FindChild("Muzzle").transform;
 		this.gun_audio = this.GetComponent<AudioSource>();
 	}
@@ -96,6 +98,8 @@ public class Gun : MonoBehaviour
         bull_script.Initialize(Muzzle.transform.position);
         bull_script.force = bullet_force;
 			}
+		}else{
+			Item.MarkedForDeath = true;
 		}
 	}
 

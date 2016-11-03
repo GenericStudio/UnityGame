@@ -60,62 +60,11 @@ public class InputManager : MonoBehaviour
 
 	public input bark;
 
-	public input[] inputs;
+	private input[] inputs;
 
-	public  InputManager()
+
+	public  void Start()
 	{
-		this.up = new input(new string[]
-		{
-			"w"
-		}, key_state.None, new string[]
-		{
-			"1 y axis",
-			"1 y dpad"
-		}, 1);
-		this.down = new input(new string[]
-		{
-			"s"
-		}, key_state.None, new string[]
-		{
-			"1 y axis",
-			"1 y dpad"
-		}, -1);
-		this.left = new input(new string[]
-		{
-			"a"
-		}, key_state.None, new string[]
-		{
-			"1 x axis",
-			"1 x dpad"
-		}, 1);
-		this.right = new input(new string[]
-		{
-			"d"
-		}, key_state.None, new string[]
-		{
-			"1 x axis",
-			"1 x dpad"
-		}, -1);
-		this.jump = new input(new string[]
-		{
-			"joystick button 0"
-		}, key_state.None);
-		this.fire = new input(new string[]
-		{
-			"joystick button 2"
-		}, key_state.None);
-		this.grab = new input(new string[]
-		{
-			"joystick button 3"
-		}, key_state.None);
-		this.fall = new input(new string[]
-		{
-			"h"
-		}, key_state.None);
-		this.bark = new input(new string[]
-		{
-			"j"
-		}, key_state.None);
 		this.inputs = new input[]
 		{
 			this.up,
@@ -128,10 +77,6 @@ public class InputManager : MonoBehaviour
 			this.fall,
 			this.bark
 		};
-	}
-
-	public  void Start()
-	{
 	}
 
 	public  void Update()
@@ -164,7 +109,7 @@ public class InputManager : MonoBehaviour
 			}
 			if (flag)
 			{
-				MonoBehaviour.print(string.Concat(this.inputs[i].keys));
+			//	MonoBehaviour.print(string.Concat(this.inputs[i].keys));
 			}
 			if (flag && this.inputs[i].state == key_state.None)
 			{

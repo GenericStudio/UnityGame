@@ -18,8 +18,6 @@ public class Item : MonoBehaviour
 
 	public SpriteRenderer _sprite;
 
-	public object fire;
-
 	public  void Start()
 	{
 		this.rigid = (Rigidbody2D)this.GetComponent("Rigidbody2D");
@@ -29,8 +27,7 @@ public class Item : MonoBehaviour
 
 	public  void PickUp(HandScript holder)
 	{
-		if (this.Holder == null)
-		{
+		
 			this.Holder = holder;
 			this.rigid.isKinematic = true;
 			int i = 0;
@@ -45,27 +42,32 @@ public class Item : MonoBehaviour
 			Vector3 localScale = this.transform.localScale;
 			float num2 = localScale.x = (float)num;
 			Vector3 vector = this.transform.localScale = localScale;
-		}
 	}
 
 	public  void Drop()
 	{
-		if (this.Holder != null)
-		{
-			this.rigid.isKinematic = false;
-			int i = 0;
-			Collider2D[] componentsInChildren = this.transform.GetComponentsInChildren<Collider2D>();
-			int length = componentsInChildren.Length;
-			while (i < length)
-			{
-				componentsInChildren[i].enabled = true;
-				i++;
-			}
-			this.Holder = null;
+        if (this.Holder != null)
+        {
+            this.rigid.isKinematic = false;
+            int i = 0;
+            Collider2D[] componentsInChildren = this.transform.GetComponentsInChildren<Collider2D>();
+            int length = componentsInChildren.Length;
+            while (i < length)
+            {
+                componentsInChildren[i].enabled = true;
+                i++;
+            }
+            this.Holder = null;
+        }
+		if(MarkedForDeath){
+			Destroy(gameObject,1);
 		}
 	}
 
-	public  void Update()
+
+
+
+    public  void Update()
 	{
 	}
 

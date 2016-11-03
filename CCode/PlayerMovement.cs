@@ -4,6 +4,7 @@ using UnityEngine;
 [Serializable]
 public class PlayerMovement : MonoBehaviour
 {
+	public Item FeetEquipment;
 	public float runSpeed;
 
 	public float accel;
@@ -73,8 +74,11 @@ public class PlayerMovement : MonoBehaviour
 	public int health;
 
 	public GameManager gameManager;
+    public bool can_jump;
+    public bool jump_triggered;
+    public float slow_fall_speed;
 
-	public PlayerMovement()
+    public PlayerMovement()
 	{
 		this.runSpeed = 35f;
 		this.accel = (float)1;
@@ -119,7 +123,7 @@ public class PlayerMovement : MonoBehaviour
 		this.rigid.velocity = this.currSpeed;
 		this.UpdateAnimator();
 		this.setStaticFrame(default(Vector2));
-	}
+    }
 
 	public  void UpdateAnimator()
 	{
@@ -170,9 +174,12 @@ public class PlayerMovement : MonoBehaviour
 	public  void handleJumps()
 	{
 		float num = this.jump_force;
-		if (this.Inputs.jump.state == key_state.Down)
+        if (isTouchingFloor) can_jump = true;
+        if (this.Inputs.jump.state == key_state.Down) jump_triggered = true;
+		if ( jump_triggered)
 		{
-			if (this.isTouchingFloor)
+            jump_triggered = false;
+			if (can_jump)
 			{
 				this.isStillJumping = true;
 				this.currSpeed.y = this.currSpeed.y + (this.staticFrame.y + num);
@@ -184,6 +191,7 @@ public class PlayerMovement : MonoBehaviour
 				this.currSpeed.x = this.currSpeed.x - ((!this.isOnRightWall) ? ((float)0) : num);
 				this.isStillJumping = true;
 			}
+            
 		}
 		if (this.Inputs.jump.state == key_state.Up)
 		{
@@ -203,19 +211,20 @@ public class PlayerMovement : MonoBehaviour
 		{
 			arg_183_1 = (this.Inputs.jump.state == key_state.Hold);
 		}
-		this.slow_fall = arg_183_1;
-	}
+        if (!isTouchingFloor || isStillJumping) can_jump = false;
+    }
 
 	public  void handleHorizontal()
 	{
 		this.ground_speed = (int)(this.currSpeed.x - this.staticFrame.x);
-		int ground_speed_magnitude = Mathf.Abs(this.ground_speed);
+		float ground_speed_magnitude = Mathf.Abs(this.ground_speed);
 		this.speedMax = (this.Inputs.down.state == key_state.None)?this.runSpeed:this.runSpeed/3 + Mathf.Abs(this.staticFrame.x);
 		float num2 = this.speedMax - (float)ground_speed_magnitude;
 		if (Mathf.Abs(this.horizontalInput) > 0.1f)
 		{
 			if (Mathf.Sign(this.horizontalInput) == Mathf.Sign((float)this.ground_speed))
 			{
+                if (num2 < 0) num2 *= 3;
 				this.currSpeed.x = this.currSpeed.x + num2 * (Time.fixedDeltaTime * this.accel) * Mathf.Sign(this.horizontalInput);
 			}
 			else
@@ -353,7 +362,7 @@ public class PlayerMovement : MonoBehaviour
 	{
 		if (this.currSpeed.y > (float)-140)
 		{
-			if (((this.isOnLeftWall && this.Inputs.left.state == key_state.Hold) || (this.isOnRightWall && this.Inputs.right.state == key_state.Hold) || this.slow_fall) && this.currSpeed.y < (float)-10)
+			if (this.currSpeed.y < (float)slow_fall_speed &&( (this.isOnLeftWall && this.Inputs.left.state == key_state.Hold) || (this.isOnRightWall && this.Inputs.right.state == key_state.Hold) || (this.slow_fall)))
 			{
 				this.currSpeed.y = this.currSpeed.y / 1.02f;
 			}
@@ -362,7 +371,9 @@ public class PlayerMovement : MonoBehaviour
 				this.currSpeed.y = this.currSpeed.y - this.gravity * Time.fixedDeltaTime;
 			}
 		}
-	}
+        slow_fall = false;
+
+    }
 
 	public void ReceiveDamage(int amount){
 		health-=amount;
