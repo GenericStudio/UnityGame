@@ -17,8 +17,9 @@ public class Item : MonoBehaviour
 	public bool solid_with_speed;
 
 	public SpriteRenderer _sprite;
+    private bool righted;
 
-	public  void Start()
+    public  void Start()
 	{
 		this.rigid = (Rigidbody2D)this.GetComponent("Rigidbody2D");
 		this.coll = (Collider2D)this.GetComponent("Collider2D");
@@ -46,6 +47,7 @@ public class Item : MonoBehaviour
 
 	public  void Drop()
 	{
+        transform.parent = null;
         if (this.Holder != null)
         {
             this.rigid.isKinematic = false;
@@ -62,6 +64,7 @@ public class Item : MonoBehaviour
 		if(MarkedForDeath){
 			Destroy(gameObject,1);
 		}
+        righted = false;
 	}
 
 
@@ -69,6 +72,16 @@ public class Item : MonoBehaviour
 
     public  void Update()
 	{
+        if (!righted)
+        {
+            if (Holder == null)
+            {
+                if (Mathf.Abs(rigid.velocity.x) < 1)
+                {
+
+                }
+            }
+        }
 	}
 
 	public  void Main()

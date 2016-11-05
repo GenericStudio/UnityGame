@@ -93,7 +93,7 @@ public class Gun : MonoBehaviour
 			{
 			   GameObject bullet = (GameObject)Instantiate(Bullet, Muzzle.position, Muzzle.rotation);
         Bullet bull_script = (Bullet)bullet.GetComponent("Bullet");
-        bull_script._velocity = new Vector2((Item.Holder.player.flipX ? -shot_speed : shot_speed), UnityEngine.Random.Range(-Spread, Spread));
+        bull_script._velocity = (transform.right * (Item.Holder.player.flipX ? -shot_speed : shot_speed)) + transform.up * UnityEngine.Random.Range(-Spread, Spread);
         bull_script.max_distance = bulletRange;
         bull_script.Initialize(Muzzle.transform.position);
         bull_script.force = bullet_force;

@@ -12,6 +12,7 @@ public class Dash : MonoBehaviour
     public bool already_dashed;
     public bool dashing;
     public Equipment Equipment;
+    public AudioClip sound;
     private float dash_dir;
 
 
@@ -30,7 +31,11 @@ public class Dash : MonoBehaviour
             pressing_dash = Equipment.Item.Holder.player.Inputs.bark.state == key_state.Down || Equipment.Item.Holder.player.Inputs.bark.state == key_state.Hold;
             if ((pressing_dash || fuel!=max_fuel) && !(fuel == max_fuel && !Equipment.Item.Holder.player.isTouchingFloor)) 
             {
-                if (fuel == max_fuel) dash_dir = Equipment.Item.Holder.player.transform.localScale.x;
+                if (fuel == max_fuel)
+                {
+                    Equipment.Item.Holder.player.audio.PlayOneShot(sound);
+                    dash_dir = Equipment.Item.Holder.player.transform.localScale.x;
+                }
 
                 if (fuel > 0)
                 {

@@ -61,4 +61,6 @@ public class Equipment : MonoBehaviour
         Equipment.equiped = false;
 
     }
+
+
 }

@@ -32,6 +32,33 @@ public class HandScript : MonoBehaviour
 
     public void Update()
     {
+        var dir = Vector2.zero;
+
+        if (Inputs.up.state == key_state.Hold)
+        {
+            dir += Vector2.up * ((player.flipX) ? -1 : 1);
+
+        }else
+        {
+            dir += Vector2.right;
+        }
+        if (Inputs.right.state == key_state.Hold || Inputs.left.state == key_state.Hold)
+        {
+            dir += Vector2.right;
+        }
+        if (Inputs.down.state == key_state.Hold && )
+        {
+            dir += Vector2.up * ((player.flipX) ? -1 : 1);
+        }
+        else
+        {
+            dir += Vector2.right;
+        }
+        var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.AngleAxis(angle, Vector3.forward),10);
+
+        
+     
         if (!(this.Holding == null) || this.Inputs.fire.state == key_state.Down)
         {
         }
